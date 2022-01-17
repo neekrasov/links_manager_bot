@@ -1,0 +1,6 @@
+aiogram
+SQLAlchemy
+APScheduler
+psycopg2
+environs
+apscheduler
