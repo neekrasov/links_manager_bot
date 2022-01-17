@@ -1,11 +1,25 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, orm, Date, Time
+from sqlalchemy import Column, BIGINT, Integer, String, ForeignKey, orm, Date, Time
+from sqlalchemy.orm import relation, relationship
 
 from utils.db_api.database import base
 
 
+class Users(base):
+    __tablename__ = 'users'
+    chat_id = Column(Integer, primary_key=True)
+    full_name = Column(String)
+
+    groups_id = relationship("Groups", cascade="all, delete")
+    groups = relation("Groups", primaryjoin="Users.chat_id == Groups.user_id")
+
+    def __repr__(self):
+        return f'{self.chat_id}:{self.full_name}'
+
+
 class Groups(base):
     __tablename__ = 'groups'
-    chat_id = Column(Integer, primary_key=True)
+    chat_id = Column(BIGINT, primary_key=True)
+    user_id = Column(ForeignKey("users.chat_id"))
     name = Column(String)
 
     links = orm.relation("Links", primaryjoin="Groups.chat_id == Links.groups_id")
