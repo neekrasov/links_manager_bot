@@ -25,5 +25,8 @@ class IsForwarded(BoundFilter):
 
 class IsGroupAdmin(BoundFilter):
     async def check(self, message: types.Message) -> bool:
-        member = await bot.get_chat_member(message.chat.id, message.from_user.id)
+        try:
+            member = await bot.get_chat_member(message.chat.id, message.from_user.id)
+        except:
+            return False
         return member.is_chat_admin()
