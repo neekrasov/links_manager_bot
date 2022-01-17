@@ -2,6 +2,7 @@ from aiogram import executor
 
 import filters
 from handlers import dp
+from utils.db_api import session
 from utils.notify_admins import on_startup_notify
 from utils.set_bot_commands import set_default_commands
 

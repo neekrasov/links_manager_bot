@@ -17,7 +17,7 @@ class Groups(base):
 class Links(base):
     __tablename__ = 'links'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    groups_id = Column(ForeignKey("groups.id"))
+    groups_id = Column(ForeignKey("groups.chat_id"))
     name = Column(String)
     url = Column(String)
 
