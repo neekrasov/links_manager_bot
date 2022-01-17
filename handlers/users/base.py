@@ -11,4 +11,5 @@ async def command_start(message: types.Message):
     if not is_admin(message.from_user.id):
         await message.answer(f"Пошёл нахуй челл")
         return
+    print("hi")
     await message.answer(f"Привет, {message.from_user.full_name}")

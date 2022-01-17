@@ -2,6 +2,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import BoundFilter
 
 from data.config import ADMINS
+from loader import bot
 
 is_admin = lambda id: id in ADMINS
 

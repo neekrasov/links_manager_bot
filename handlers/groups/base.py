@@ -4,7 +4,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import CommandStart, CommandHelp
 
 from filters import IsGroup, IsGroupAdmin
-from loader import dp, bot
+from loader import dp
 from utils.db_api import session
 from utils.db_api.models import Users, Groups
 
