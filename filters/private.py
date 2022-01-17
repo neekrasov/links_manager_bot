@@ -2,6 +2,7 @@ from aiogram import types
 from aiogram.dispatcher.filters import BoundFilter
 
 from data.config import ADMINS
+from loader import bot
 
 is_admin = lambda id: id in ADMINS
 
@@ -29,8 +30,5 @@ class IsGroupCallBack(BoundFilter):
 
 class IsGroupAdmin(BoundFilter):
     async def check(self, message: types.Message) -> bool:
-        try:
-            member = await bot.get_chat_member(message.chat.id, message.from_user.id)
-        except:
-            return False
+        member = await bot.get_chat_member(message.chat.id, message.from_user.id)
         return member.is_chat_admin()
