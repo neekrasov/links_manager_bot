@@ -17,5 +17,6 @@ async def give_subject(message: types.Message):
 @dp.callback_query_handler(IsGroupCallBack())
 async def get_link(call: types.CallbackQuery):
     link = session.query(Links).get(call.data)
+    await call.answer()
     await call.message.answer("Ссылка на конференцию:\n"
                               f"{link.url}")
