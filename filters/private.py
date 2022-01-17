@@ -20,3 +20,8 @@ class IsForwarded(BoundFilter):
     async def check(self, message: types.Message) -> bool:
         if message.forward_from_chat:
             return message.forward_from_chat.type == types.ChatType.CHANNEL
+
+
+class IsGroupCallBack(BoundFilter):
+    async def check(self, call: types.CallbackQuery) -> bool:
+        return call.message.chat.type == types.ChatType.SUPERGROUP
