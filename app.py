@@ -2,9 +2,10 @@ from aiogram import executor
 
 import filters
 from handlers import dp
+from utils.user_mailing import start_mailing
+from utils.set_bot_commands import set_default_commands
 from utils.db_api import session
 from utils.notify_admins import on_startup_notify
-from utils.set_bot_commands import set_default_commands
 
 
 async def on_startup(dispatcher):
@@ -16,6 +17,9 @@ async def on_startup(dispatcher):
 
     # Уведомляет про запуск
     # await on_startup_notify(dispatcher)
+
+    # Запускаем уведомления
+    start_mailing()
 
 
 if __name__ == '__main__':

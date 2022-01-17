@@ -31,7 +31,7 @@ class Groups(base):
 class Links(base):
     __tablename__ = 'links'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    groups_id = Column(ForeignKey("groups.chat_id"))
+    groups_id = Column(ForeignKey("groups.chat_id"))  # поменять название на group_id
     name = Column(String)
     url = Column(String)
 
@@ -45,6 +45,8 @@ class DateTimeForLinks(base):
     links_id = Column(ForeignKey("links.id"))
     date = Column(Date)
     time = Column(Time)
+
+    link = orm.relation('Links')
 
     def __repr__(self):
         return f'{self.links_id}:{self.date}:{self.time}'
