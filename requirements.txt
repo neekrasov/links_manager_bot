@@ -1,6 +1,5 @@
 aiogram
-SQLAlchemy
 APScheduler
-psycopg2
 environs
-apscheduler
+gino
+loguru

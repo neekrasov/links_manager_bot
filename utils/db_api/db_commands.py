@@ -1,11 +1,11 @@
 import asyncpg
 from aiogram import types
-from utils.db_api.models import User, Group, DateTimeForLink
+from utils.db_api.models import User, Group, DateTimeForLink, Link
 
 
-async def get_user(chat_id: int):
+async def get_user(user_id: int):
     try:
-        user = await User.get(chat_id)  # where(User.chat_id == chat_id).gino.first()
+        user = await User.get(user_id)  # where(User.chat_id == chat_id).gino.first()
     except asyncpg.exceptions.UndefinedTableError:
         user = None
     return user
@@ -13,15 +13,30 @@ async def get_user(chat_id: int):
 
 async def get_group(chat_id: int):
     try:
-        group = await Group.get(chat_id)  # where(User.chat_id == chat_id).gino.first()
+        group = await Group.query.where(Group.chat_id == chat_id).gino.first()
     except asyncpg.exceptions.UndefinedTableError:
         group = None
     return group
 
 
+async def get_link(id: int):
+    try:
+        link = await Link.get(id)
+    except asyncpg.exceptions.UndefinedTableError:
+        link = None
+    return link
+
+
+async def get_user_groups(user_id: int):
+    user = await get_user(user_id)
+    groups = await Group.query.where(Group.admin_id==user.chat_id).gino.all()
+    return groups
+
+
 async def get_links_for_group(chat_id: int):
     group = await get_group(chat_id)
-    return group.links
+    links = await Link.query.where(Link.group_id==group.id).gino.all()
+    return links
 
 
 async def get_datetime_for_all_links():
@@ -51,7 +66,6 @@ async def register_groups(message: types.Message):
     group = Group(chat_id=message.chat.id,
                   admin_id=message.from_user.id,
                   name=message.chat.title)
-    print(group)
 
     await group.create()
     await message.answer(f"Группа ({chat_title}) добавлена для настройки\n"
