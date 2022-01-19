@@ -3,31 +3,7 @@ from aiogram.dispatcher.filters import CommandStart, CommandHelp, Command
 
 from filters import IsGroup, IsGroupAdmin
 from loader import dp
-from utils.db_api import session
-from utils.db_api.models import Users, Groups
-
-
-def register_user(user_id, full_name):
-    user = session.query(Users).get(user_id)
-    if user:
-        return False
-    user = Users(chat_id=user_id,
-                 full_name=full_name)
-    session.add(user)
-    session.commit()
-    return True
-
-
-def register_groups(message: types.Message):
-    group = session.query(Groups).get(message.chat.id)
-    if group:
-        return False
-    groups = Groups(chat_id=message.chat.id,
-                    admin_id=message.from_user.id,
-                    name=message.chat.title)
-    session.add(groups)
-    session.commit()
-    return True
+from utils.db_api.db_commands import register_user, register_groups
 
 
 @dp.message_handler(IsGroup(), IsGroupAdmin(), CommandStart())
@@ -46,14 +22,5 @@ async def command_help(message: types.Message):
 async def get_group_for_user(message: types.Message):
     user_id = message.from_user.id
     full_name = message.from_user.full_name
-    register_user(user_id, full_name)
-    chat_title = message.chat.title
-    if register_groups(message):
-        await message.answer(f"Группа ({chat_title}) добавлена для настройки\n"
-                             f"Для настройки перейдите в бота\n"
-                             f"@mospolytech_get_links_bot")
-    else:
-        group = session.query(Groups).get(message.chat.id)
-        await message.answer(f"Группа ({chat_title}) уже была добавлена для настройки\n"
-                             f"Для настройки перейдите в бота\n"
-                             f"@mospolytech_get_links_bot")
+    await register_user(user_id, full_name)
+    await register_groups(message)

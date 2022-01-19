@@ -1,9 +1,9 @@
 from datetime import datetime
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 from loader import dp
-from utils.db_api import session
-from utils.db_api.models import DateTimeForLinks
+from utils.db_api.db_commands import get_datetime_for_all_links
 
 scheduler = AsyncIOScheduler()
 
@@ -23,8 +23,8 @@ def scheduler_add_job(dp, task):
                       args=(dp, task.link))
 
 
-def start_mailing():
+async def start_mailing():
     scheduler.start()
-    tasks = session.query(DateTimeForLinks).all()
+    tasks = await get_datetime_for_all_links()
     for task in tasks:
         scheduler_add_job(dp, task)

@@ -2,24 +2,26 @@ from aiogram import executor
 
 import filters
 from handlers import dp
-from utils.user_mailing import start_mailing
-from utils.set_bot_commands import set_default_commands
-from utils.db_api import session
+from utils.db_api import database
 from utils.notify_admins import on_startup_notify
+from utils.set_bot_commands import set_default_commands
+from utils.user_mailing import start_mailing
 
 
 async def on_startup(dispatcher):
     print("Bot start")
     filters.setup(dp)
+    await database.on_startup(dp)
+    await database.db.gino.create_all()
 
     # Устанавливаем дефолтные команды
     await set_default_commands(dispatcher)
 
     # Уведомляет про запуск
-    # await on_startup_notify(dispatcher)
+    await on_startup_notify(dispatcher)
 
     # Запускаем уведомления
-    start_mailing()
+    await start_mailing()
 
 
 if __name__ == '__main__':

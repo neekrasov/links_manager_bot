@@ -9,7 +9,6 @@ from loader import dp
 @dp.message_handler(IsPrivate(), CommandStart())
 async def command_start(message: types.Message):
     if not is_admin(message.from_user.id):
-        await message.answer(f"Пошёл нахуй челл")
+        await message.answer(f"Вы не администратор.")
         return
-    print("hi")
     await message.answer(f"Привет, {message.from_user.full_name}")
