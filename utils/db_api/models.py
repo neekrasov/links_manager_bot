@@ -1,4 +1,4 @@
-from sqlalchemy import Column, BIGINT, Integer, String, ForeignKey, orm, Date, Time
+from sqlalchemy import Column, BIGINT, Integer, String, ForeignKey, orm, Date, Time, Boolean
 from sqlalchemy.orm import relation, relationship
 
 from utils.db_api.database import base
@@ -9,8 +9,10 @@ class Users(base):
     chat_id = Column(Integer, primary_key=True)
     full_name = Column(String)
 
-    groups_id = relationship("Groups", cascade="all, delete")
-    groups = relation("Groups", primaryjoin="Users.chat_id == Groups.user_id")
+    groups = relation(
+        "Groups",
+        back_populates='admin',
+    )
 
     def __repr__(self):
         return f'{self.chat_id}:{self.full_name}'
@@ -19,21 +21,40 @@ class Users(base):
 class Groups(base):
     __tablename__ = 'groups'
     chat_id = Column(BIGINT, primary_key=True)
-    user_id = Column(ForeignKey("users.chat_id"))
+    admin_id = Column(ForeignKey("users.chat_id"))
     name = Column(String)
 
-    links = orm.relation("Links", primaryjoin="Groups.chat_id == Links.groups_id")
+    links = orm.relation(
+        "Links",
+        back_populates='group',
+    )
+    admin = orm.relation('Users')
 
     def __repr__(self):
         return f'{self.chat_id}:{self.name}'
 
 
+class GroupUsers(base):
+    __tablename__ = 'group_users'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    group_id = Column(ForeignKey("groups.chat_id"))
+    user_id = Column(ForeignKey("users.chat_id"))
+
+    users = orm.relation("Users", primaryjoin="GroupUsers.user_id == Users.chat_id")
+
+    def __repr__(self):
+        return f'{self.group_id}:{self.user_id}'
+
+
 class Links(base):
     __tablename__ = 'links'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    groups_id = Column(ForeignKey("groups.chat_id"))  # поменять название на group_id
+    group_id = Column(ForeignKey("groups.chat_id"))
     name = Column(String)
     url = Column(String)
+    one_time = Column(Boolean)
+
+    group = orm.relation('Groups')
 
     def __repr__(self):
         return f'{self.name}:{self.groups_id}'
@@ -44,7 +65,9 @@ class DateTimeForLinks(base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     links_id = Column(ForeignKey("links.id"))
     date = Column(Date)
-    time = Column(Time)
+    time_start = Column(Time)
+    time_end = Column(Time)
+    repeat = Column(Time)
 
     link = orm.relation('Links')
 

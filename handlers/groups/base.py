@@ -23,7 +23,7 @@ def register_groups(message: types.Message):
     if group:
         return False
     groups = Groups(chat_id=message.chat.id,
-                    user_id=message.from_user.id,
+                    admin_id=message.from_user.id,
                     name=message.chat.title)
     session.add(groups)
     session.commit()
@@ -53,6 +53,7 @@ async def get_group_for_user(message: types.Message):
                              f"Для настройки перейдите в бота\n"
                              f"@mospolytech_get_links_bot")
     else:
+        group = session.query(Groups).get(message.chat.id)
         await message.answer(f"Группа ({chat_title}) уже была добавлена для настройки\n"
                              f"Для настройки перейдите в бота\n"
                              f"@mospolytech_get_links_bot")

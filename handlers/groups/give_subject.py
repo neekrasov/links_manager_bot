@@ -18,5 +18,5 @@ async def give_subject(message: types.Message):
 async def get_link(call: types.CallbackQuery):
     link = session.query(Links).get(call.data)
     await call.answer()
-    await call.message.answer("Ссылка на конференцию:\n"
+    await call.message.answer(f"Ссылка на конференцию ({link.name}):\n"
                               f"{link.url}")
