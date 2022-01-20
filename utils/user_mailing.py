@@ -25,7 +25,7 @@ def scheduler_add_job(dp, task):
 
 
 async def start_mailing():
-    await add_task()
+    # await add_task()
     scheduler.start()
     tasks = await get_datetime_for_all_links()
     for task in tasks:
@@ -34,7 +34,7 @@ async def start_mailing():
 
 async def add_task():
     task = DateTimeForLink(
-        links_id=1,
+        link_id=1,
         date=date(datetime.now().year, month=1, day=20),
         time_start=time(hour=18, minute=0),
         time_end=time(hour=20, minute=0),
