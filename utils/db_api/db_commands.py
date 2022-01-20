@@ -59,6 +59,7 @@ async def register_groups(message: types.Message):
     chat_title = message.chat.title
     if group:
         await message.answer(f"Группа ({chat_title}) уже была добавлена для настройки\n"
+                             f"Пользователю: @{message.from_user.username}\n"
                              f"Для настройки перейдите в бота\n"
                              f"@mospolytech_get_links_bot")
         return
@@ -68,6 +69,7 @@ async def register_groups(message: types.Message):
                   name=message.chat.title)
 
     await group.create()
-    await message.answer(f"Группа ({chat_title}) добавлена для настройки\n"
+    await message.answer(f"Группа ({chat_title}) добавлена для настройки "
+                         f"Пользователю: @{message.from_user.username}\n"
                          f"Для настройки перейдите в бота\n"
                          f"@mospolytech_get_links_bot")
