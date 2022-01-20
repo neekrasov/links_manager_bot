@@ -15,10 +15,8 @@ class User(db.Model):
 class Group(db.Model):
     __tablename__ = 'group'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    chat_id = Column(BIGINT)
+    chat_id = Column(BIGINT, primary_key=True, autoincrement=True)
     name = Column(String)
-    admin_id = Column(ForeignKey("user.chat_id"))
 
     def __repr__(self):
         return f'{self.chat_id}:{self.name}'
@@ -27,10 +25,9 @@ class Group(db.Model):
 class GroupUsers(db.Model):
     __tablename__ = 'group_users'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    group_id = Column(ForeignKey("group.id"))
+    group_id = Column(ForeignKey("group.chat_id"))
     user_id = Column(ForeignKey("user.chat_id"))
-
-    users = orm.relation("User", primaryjoin="GroupUsers.user_id == User.chat_id")
+    is_admin = Column(Boolean, default=False)
 
     def __repr__(self):
         return f'{self.group_id}:{self.user_id}'
@@ -39,13 +36,13 @@ class GroupUsers(db.Model):
 class Link(db.Model):
     __tablename__ = 'link'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    group_id = Column(ForeignKey("group.id"))
+    group_id = Column(ForeignKey("group.chat_id"))
     name = Column(String)
     url = Column(String)
     one_time = Column(Boolean)
 
     def __repr__(self):
-        return f'{self.name}:{self.groups_id}'
+        return f'{self.name}:{self.group_id}'
 
 
 class DateTimeForLink(db.Model):
@@ -57,7 +54,5 @@ class DateTimeForLink(db.Model):
     time_end = Column(Time)
     repeat = Column(Integer)
 
-    link = orm.relation('Link')
-
     def __repr__(self):
-        return f'{self.links_id}:{self.date}:{self.time}'
+        return f'{self.link_id}:{self.date}:{self.time}'

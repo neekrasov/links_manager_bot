@@ -1,3 +1,4 @@
+import link as link
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboards.inline.callback_data import link_callback_data
@@ -9,6 +10,6 @@ async def subjects(chat_id) -> InlineKeyboardMarkup:
     markup = InlineKeyboardMarkup(row_width=1)
     for link in links:
         button = InlineKeyboardButton(text=link.name,
-                                      callback_data=link_callback_data.new(id=link.group_id))
+                                      callback_data=link_callback_data.new(id=link.id))
         markup.insert(button)
     return markup

@@ -1,6 +1,6 @@
 import asyncpg
 from aiogram import types
-from utils.db_api.models import User, Group, DateTimeForLink, Link
+from utils.db_api.models import User, Group, DateTimeForLink, Link, GroupUsers
 
 
 async def get_user(user_id: int):
@@ -29,13 +29,13 @@ async def get_link(id: int):
 
 async def get_user_groups(user_id: int):
     user = await get_user(user_id)
-    groups = await Group.query.where(Group.admin_id==user.chat_id).gino.all()
+    groups = await Group.join(GroupUsers).select().where(GroupUsers.user_id == user.chat_id).gino.all()
     return groups
 
 
 async def get_links_for_group(chat_id: int):
     group = await get_group(chat_id)
-    links = await Link.query.where(Link.group_id==group.id).gino.all()
+    links = await Link.query.where(Link.group_id == group.chat_id).gino.all()
     return links
 
 
@@ -65,10 +65,14 @@ async def register_groups(message: types.Message):
         return
 
     group = Group(chat_id=message.chat.id,
-                  admin_id=message.from_user.id,
                   name=message.chat.title)
-
     await group.create()
+
+    group_user = GroupUsers(group_id=message.chat.id,
+                            user_id=message.from_user.id,
+                            is_admin=True)
+    await group_user.create()
+
     await message.answer(f"Группа ({chat_title}) добавлена для настройки "
                          f"Пользователю: @{message.from_user.username}\n"
                          f"Для настройки перейдите в бота\n"
