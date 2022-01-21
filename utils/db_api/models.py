@@ -48,7 +48,7 @@ class Link(db.Model):
 class DateTimeForLink(db.Model):
     __tablename__ = 'datetime_for_link'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    link_id = Column(ForeignKey("link.id"))  # переименовать links_id на link_id
+    link_id = Column(ForeignKey("link.id"))
     date = Column(Date)
     time_start = Column(Time)
     time_end = Column(Time)

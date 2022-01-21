@@ -19,9 +19,9 @@ async def get_group(chat_id: int):
     return group
 
 
-async def get_link(id: int):
+async def get_link(link_id: int):
     try:
-        link = await Link.get(id)
+        link = await Link.get(link_id)
     except asyncpg.exceptions.UndefinedTableError:
         link = None
     return link
@@ -44,6 +44,11 @@ async def get_datetime_for_all_links():
     return tasks
 
 
+async def get_datetime_for_link(link_id):
+    datetime_for_link = await DateTimeForLink.query.where(link_id == DateTimeForLink.link_id).gino.first()
+    return datetime_for_link
+
+
 async def register_user(chat_id, full_name):
     user = await get_user(chat_id)
     if user:
@@ -56,24 +61,24 @@ async def register_user(chat_id, full_name):
 
 async def register_groups(message: types.Message):
     group = await get_group(message.chat.id)
+    if not group:
+        group = Group(chat_id=message.chat.id,
+                      name=message.chat.title)
+        await group.create()
     chat_title = message.chat.title
-    if group:
+    user_groups = await get_user_groups(message.from_user.id)
+    if group.chat_id in user_groups:
         await message.answer(f"Группа ({chat_title}) уже была добавлена для настройки\n"
                              f"Пользователю: @{message.from_user.username}\n"
                              f"Для настройки перейдите в бота\n"
                              f"@mospolytech_get_links_bot")
         return
 
-    group = Group(chat_id=message.chat.id,
-                  name=message.chat.title)
-    await group.create()
-
     group_user = GroupUsers(group_id=message.chat.id,
                             user_id=message.from_user.id,
                             is_admin=True)
     await group_user.create()
 
-    await message.answer(f"Группа ({chat_title}) добавлена для настройки "
-                         f"Пользователю: @{message.from_user.username}\n"
+    await message.answer(f"Группа ({chat_title}) добавлена для настройки пользователю: @{message.from_user.username}\n"
                          f"Для настройки перейдите в бота\n"
                          f"@mospolytech_get_links_bot")
