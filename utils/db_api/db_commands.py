@@ -19,9 +19,9 @@ async def get_group(chat_id: int):
     return group
 
 
-async def get_link(id: int):
+async def get_link(link_id: int):
     try:
-        link = await Link.get(id)
+        link = await Link.get(link_id)
     except asyncpg.exceptions.UndefinedTableError:
         link = None
     return link
@@ -42,6 +42,11 @@ async def get_links_for_group(chat_id: int):
 async def get_datetime_for_all_links():
     tasks = await DateTimeForLink.query.gino.all()
     return tasks
+
+
+async def get_datetime_for_link(link_id):
+    datetime_for_link = await DateTimeForLink.query.where(link_id == DateTimeForLink.link_id).gino.first()
+    return datetime_for_link
 
 
 async def register_user(user_id, full_name):
