@@ -1,3 +1,5 @@
+from typing import Union
+
 from aiogram import types
 from aiogram.dispatcher.filters import BoundFilter
 
@@ -8,24 +10,25 @@ is_admin = lambda id: id in ADMINS
 
 
 class IsGroup(BoundFilter):
-    async def check(self, message: types.Message) -> bool:
-        return message.chat.type == types.ChatType.SUPERGROUP
+    async def check(self, message: Union[types.Message, types.CallbackQuery]) -> bool:
+        if isinstance(message, types.Message):
+            return message.chat.type == types.ChatType.SUPERGROUP
+        if isinstance(message, types.CallbackQuery):
+            return message.message.chat.type == types.ChatType.SUPERGROUP
 
 
 class IsPrivate(BoundFilter):
-    async def check(self, message: types.Message) -> bool:
-        return message.chat.type == types.ChatType.PRIVATE
+    async def check(self, message: Union[types.Message, types.CallbackQuery]) -> bool:
+        if isinstance(message, types.Message):
+            return message.chat.type == types.ChatType.PRIVATE
+        if isinstance(message, types.CallbackQuery):
+            return message.message.chat.type == types.ChatType.PRIVATE
 
 
 class IsForwarded(BoundFilter):
     async def check(self, message: types.Message) -> bool:
         if message.forward_from_chat:
             return message.forward_from_chat.type == types.ChatType.CHANNEL
-
-
-class IsGroupCallBack(BoundFilter):
-    async def check(self, call: types.CallbackQuery) -> bool:
-        return call.message.chat.type == types.ChatType.SUPERGROUP
 
 
 class IsGroupAdmin(BoundFilter):

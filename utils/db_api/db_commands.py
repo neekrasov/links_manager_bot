@@ -49,14 +49,13 @@ async def get_datetime_for_link(link_id):
     return datetime_for_link
 
 
-async def register_user(chat_id, full_name):
-    user = await get_user(chat_id)
+async def register_user(user_id, full_name):
+    user = await get_user(user_id)
     if user:
-        return False
-    user = User(chat_id=chat_id,
+        return
+    user = User(chat_id=user_id,
                 full_name=full_name)
     await user.create()
-    return True
 
 
 async def register_groups(message: types.Message):
@@ -79,6 +78,7 @@ async def register_groups(message: types.Message):
                             is_admin=True)
     await group_user.create()
 
-    await message.answer(f"Группа ({chat_title}) добавлена для настройки пользователю: @{message.from_user.username}\n"
+    await message.answer(f"Группа ({chat_title}) добавлена для настройки "
+                         f"Пользователю: @{message.from_user.username}\n"
                          f"Для настройки перейдите в бота\n"
                          f"@mospolytech_get_links_bot")

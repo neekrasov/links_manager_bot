@@ -1,22 +1,24 @@
 from aiogram import types
 from aiogram.dispatcher.filters import Command
+from aiogram.utils.markdown import hlink
 
-from filters import IsGroupCallBack
 from filters.private import IsGroup
-from keyboards.inline.callback_data import link_callback_data
-from keyboards.inline.subjects_buttons import subjects
+from keyboards.inline.get_all_links_keyboard import subjects_buttons_for_group
+from keyboards.inline.menu_keyboard import links_all
 from loader import dp
 from utils.db_api.db_commands import get_link
 
 
-@dp.message_handler(IsGroup(), Command("test"))
+@dp.message_handler(IsGroup(), Command("get_all_links"))
 async def give_subject(message: types.Message):
-    await message.answer('Выбери предмет', reply_markup=await subjects(message.chat.id))
+    print(f"message.chat.id -> {message.chat.id}")
+    await message.answer('Выбери предмет', reply_markup=await subjects_buttons_for_group(message.chat.id))
 
 
-@dp.callback_query_handler(IsGroupCallBack(), link_callback_data.filter())
-async def link(call: types.CallbackQuery, callback_data: dict):
+@dp.callback_query_handler(IsGroup(), links_all.filter())  # вынести эту хуету
+async def show_link(call: types.CallbackQuery, callback_data: dict):
     link = await get_link(int(callback_data['id']))
     await call.answer()
-    await call.message.answer(f"Ссылка на конференцию({link.name}):\n"
-                              f"{link.url}")
+    await call.message.answer(f"{hlink(title='Ссылка', url=link.url)} на конференцию <b>🎓{link.name}🎓</b>\n",
+                              disable_web_page_preview=True,
+                              )

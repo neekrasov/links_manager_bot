@@ -5,7 +5,7 @@ from utils.db_api.database import db
 
 class User(db.Model):
     __tablename__ = 'user'
-    chat_id = Column(Integer, primary_key=True)
+    chat_id = Column(BIGINT, primary_key=True)
     full_name = Column(String)
 
     def __repr__(self):
