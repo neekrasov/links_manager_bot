@@ -3,10 +3,10 @@ from typing import Union
 from aiogram import types
 from aiogram.dispatcher.filters import BoundFilter
 
-from data.config import ADMINS
+from data.config import TG_BOT_ADMIN_USERNAMES
 from loader import bot
 
-is_admin = lambda id: id in ADMINS
+is_admin = lambda id: id in TG_BOT_ADMIN_USERNAMES
 
 
 class IsGroup(BoundFilter):

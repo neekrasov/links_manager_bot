@@ -1,28 +1,28 @@
 from datetime import datetime, timedelta
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from loader import dp
 from utils.db_api.db_commands import get_datetime_for_all_links, get_link, get_datetime_for_link
-from utils.db_api.models import DateTimeForLink
+from utils.handlers import answer_link
 
 scheduler = AsyncIOScheduler()
 
 
-async def mailing(dp, link):
-    datetime_for_link = await get_datetime_for_link(link.id)
+async def mailing(link_id, chat_id):
+    datetime_for_link = await get_datetime_for_link(link_id)
     await datetime_for_link.update(date=datetime_for_link.date + timedelta(days=datetime_for_link.repeat)).apply()
-    await dp.bot.send_message(text=f"Ссылка на конференцию ({link.name}):\n"
-                                   f"{link.url}",
-                              chat_id=link.group_id)
+    await answer_link(link_id, chat_id)
 
 
-async def scheduler_add_job(dp, task):
+async def scheduler_add_job(task):
     link = await get_link(task.link_id)
     task_datetime = datetime.combine(task.date, task.time_start)
+    if not link.one_time and task_datetime < datetime.now():
+        await task.update(date=task.date + timedelta(days=task.repeat)).apply()
+        task_datetime = datetime.combine(task.date, task.time_start)
     scheduler.add_job(mailing,
                       trigger="interval",
                       next_run_time=task_datetime,
                       seconds=task.repeat*60*60*24,
-                      args=(dp, link))
+                      args=(link.id, link.group_id))
 
 
 async def start_mailing():
@@ -30,7 +30,7 @@ async def start_mailing():
     scheduler.start()
     tasks = await get_datetime_for_all_links()
     for task in tasks:
-        await scheduler_add_job(dp, task)
+        await scheduler_add_job(task)
 
 
 # async def add_task():

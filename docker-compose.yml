@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14-alpine
+    container_name: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - default
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - default
+    restart: always
+
+  tg_bot:
+    build:
+      dockerfile:
+        Dockerfile
+    container_name: telegram_bot
+    ports:
+      - 7500:7500
+    networks:
+      - default
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+
+

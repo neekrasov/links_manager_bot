@@ -35,6 +35,8 @@ async def get_user_groups(user_id: int):
 
 async def get_links_for_group(chat_id: int):
     group = await get_group(chat_id)
+    if not group:
+        return []
     links = await Link.query.where(Link.group_id == group.chat_id).gino.all()
     return links
 
@@ -66,13 +68,13 @@ async def register_groups(message: types.Message):
         await group.create()
     chat_title = message.chat.title
     user_groups = await get_user_groups(message.from_user.id)
-    if group.chat_id in user_groups:
-        await message.answer(f"Группа ({chat_title}) уже была добавлена для настройки\n"
+    user_groups_id = [group.group_id for group in user_groups]
+    if group.chat_id in user_groups_id:
+        await message.answer(f"Группа ({chat_title}) ранее была добавлена для настройки\n"
                              f"Пользователю: @{message.from_user.username}\n"
                              f"Для настройки перейдите в бота\n"
                              f"@mospolytech_get_links_bot")
         return
-
     group_user = GroupUsers(group_id=message.chat.id,
                             user_id=message.from_user.id,
                             is_admin=True)
