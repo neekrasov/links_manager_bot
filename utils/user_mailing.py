@@ -4,7 +4,7 @@ from loader import dp
 from utils.db_api.db_commands import get_datetime_for_all_links, get_link, get_datetime_for_link
 from utils.db_api.models import DateTimeForLink
 
-scheduler = AsyncIOScheduler()
+scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
 
 
 async def mailing(dp, link):
