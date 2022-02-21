@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import Dispatcher
 from loguru import logger
 
@@ -10,4 +12,5 @@ async def on_startup_notify(dp: Dispatcher):
             await dp.bot.send_message(admin, "Бот Запущен")
 
         except Exception as err:
-            pass
+            logging.exception(err)
+        logger.info(f'Админы {TG_BOT_ADMIN_USERNAMES} уведомлены о запуске бота')

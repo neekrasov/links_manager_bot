@@ -9,3 +9,4 @@ db = Gino()
 async def on_startup(dp):
     logger.info("Setup PostgreSQL Connection")
     await db.set_bind(DATABASE_URL)
+

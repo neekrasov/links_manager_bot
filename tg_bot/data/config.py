@@ -1,3 +1,5 @@
+import time
+
 from environs import Env, EnvValidationError
 from pathlib import Path
 import os
@@ -54,6 +56,22 @@ def get_domain_url():
     return domain
 
 
+def get_logging_level() -> list:
+    try:
+        logging_level = env.list("LOGGING_LEVEL")
+    except EnvValidationError:
+        logging_level = os.environ['LOGGING_LEVEL']
+    return logging_level
+
+
+def get_time_zone() -> str:
+    try:
+        time_zone = env.str("TIME_ZONE")
+    except EnvValidationError:
+        time_zone = os.environ['TIME_ZONE']
+    return time_zone
+
+
 TG_BOT_TOKEN = get_tg_bot_token()
 TG_BOT_PUBLIC_PORT = get_tg_bot_public_port()
 TG_BOT_ADMIN_USERNAMES = get_tg_bot_admins()
@@ -65,3 +83,7 @@ WEBHOOK_URL = f'{DOMAIN_URL}{WEBHOOK_PATH}'
 DATABASE_URL = get_db_url()
 
 LOGS_BASE_PATH = str(Path(__file__).parent.parent / 'logs')
+
+LOGGING_LEVEL = get_logging_level()
+
+TIME_ZONE = get_time_zone()

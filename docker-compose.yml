@@ -9,7 +9,7 @@ services:
     networks:
       - default
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - E:\PostgreSQL\14\data:/var/lib/postgresql/data
     env_file:
       - .env
 
@@ -22,13 +22,13 @@ services:
       - default
     restart: always
 
-  tg_bot:
+  telegram_bot:
     build:
       dockerfile:
-        Dockerfile
+        ./tg_bot/Dockerfile
     container_name: telegram_bot
     ports:
-      - 7500:7500
+      - ${TG_BOT_PUBLIC_PORT}:${TG_BOT_PUBLIC_PORT}
     networks:
       - default
     env_file:
@@ -37,7 +37,5 @@ services:
     depends_on:
       - db
 
-volumes:
-  postgres_data:
 
 

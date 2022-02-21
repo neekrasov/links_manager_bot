@@ -55,4 +55,4 @@ class DateTimeForLink(db.Model):
     repeat = Column(Integer)
 
     def __repr__(self):
-        return f'{self.link_id}:{self.date}:{self.time}'
+        return f'link_id({self.link_id})'

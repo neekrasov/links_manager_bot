@@ -9,12 +9,14 @@ from loader import bot, dp
 
 
 async def on_startup(app: web.Application):
+    # Сбор информации о хэндлерах
     from handlers import dp
 
     # Настройка фильтров
     import filters
     filters.setup(dp)
 
+    # Настройка middlewares
     import middlewares
     middlewares.setup(dp)
 
@@ -32,11 +34,12 @@ async def on_startup(app: web.Application):
     await start_mailing()
 
     # Уведомляет про запуск
-    from utils.notify_admins import on_startup_notify
+    from utils.misc.notify_admins import on_startup_notify
     await on_startup_notify(dp)
 
     logger.info('Configure Webhook URL to: {url}', url=config.WEBHOOK_URL)
     await dp.bot.set_webhook(config.WEBHOOK_URL)
+    logger.info(f'Bot is running on port {config.TG_BOT_PUBLIC_PORT}')
 
 
 async def on_shutdown(app: web.Application):
@@ -45,10 +48,12 @@ async def on_shutdown(app: web.Application):
 
 
 async def init() -> web.Application:
-    from utils.misc import logging
+    from utils.misc import logging, settings
     import web_handlers
 
     logging.setup()
+    settings.on_startup()
+
     app = web.Application()
     subapps: List[Tuple[str, web.Application]] = [
         ('/tg/webhooks/', web_handlers.tg_updates_app),
