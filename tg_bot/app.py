@@ -39,7 +39,7 @@ async def on_startup(app: web.Application):
 
     logger.info('Configure Webhook URL to: {url}', url=config.WEBHOOK_URL)
     await dp.bot.set_webhook(config.WEBHOOK_URL)
-    logger.info(f'Bot is running on port {config.TG_BOT_PUBLIC_PORT}')
+    logger.info(f'Bot is running on port {app.get("port")}')
 
 
 async def on_shutdown(app: web.Application):
@@ -68,4 +68,4 @@ async def init() -> web.Application:
 
 
 if __name__ == '__main__':
-    web.run_app(init(), port=config.TG_BOT_PUBLIC_PORT)
+    web.run_app(init())
