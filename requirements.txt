@@ -1,5 +1,0 @@
-aiogram
-APScheduler
-environs
-gino
-loguru

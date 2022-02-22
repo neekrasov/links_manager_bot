@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14-alpine
+    container_name: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - default
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - default
+    restart: always
+
+  web:
+    build:
+      context: ./rest_API
+      dockerfile:
+        Dockerfile
+    container_name: rest_API
+#    volumes:
+#      - .:/usr/src/rest_API
+    ports:
+      - "0.0.0.0:8000:8000"
+    networks:
+      - default
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+
+#  telegram_bot:
+#    build:
+#      dockerfile:
+#        ./tg_bot/Dockerfile
+#    container_name: telegram_bot
+#    ports:
+#      - ${TG_BOT_PUBLIC_PORT}:${TG_BOT_PUBLIC_PORT}
+#    networks:
+#      - default
+#    env_file:
+#      - .env
+#    restart: always
+#    depends_on:
+#      - db
+
+
+
