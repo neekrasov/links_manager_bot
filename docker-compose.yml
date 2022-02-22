@@ -28,7 +28,7 @@ services:
       dockerfile: Dockerfile
     container_name: telegram_bot
     ports:
-      - ${TG_BOT_PUBLIC_PORT}:${TG_BOT_PUBLIC_PORT}
+      - 8443:${TG_BOT_PUBLIC_PORT}
     networks:
       - default
     env_file:
