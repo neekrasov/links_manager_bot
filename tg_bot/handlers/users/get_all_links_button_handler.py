@@ -4,7 +4,7 @@ from aiogram.utils.markdown import hlink
 from filters import IsPrivate
 from keyboards.inline.menu_keyboard import get_group_menu_buttons, subjects_buttons
 from loader import dp
-from utils.db_api.db_commangs import get_group, get_link
+from utils.db_api.db_commands import get_group, get_link
 
 
 @dp.callback_query_handler(IsPrivate())  # LEVEL =  10

@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters import CommandStart
 from filters import IsPrivate
 from keyboards.inline.commandstart_keyboard import start_private_buttons
 from loader import dp
-from utils.db_api.db_commangs import register_user
+from utils.db_api.db_commands import register_user
 
 
 @dp.message_handler(IsPrivate(), CommandStart())

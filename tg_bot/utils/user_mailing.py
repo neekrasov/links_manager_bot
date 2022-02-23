@@ -3,7 +3,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loguru import logger
 
 from data.config import TIME_ZONE
-from utils.db_api.db_commands import get_datetime_for_all_links, get_link, get_datetime_for_link
+from utils.db_api.db_commands import get_datetime_for_link, get_link, get_datetime_for_all_links
 from utils.handlers import answer_link
 
 scheduler = AsyncIOScheduler(timezone=TIME_ZONE)
@@ -11,14 +11,14 @@ scheduler = AsyncIOScheduler(timezone=TIME_ZONE)
 
 async def mailing(link_id, chat_id):
     datetime_for_link = await get_datetime_for_link(link_id)
-    await datetime_for_link.update(date=datetime_for_link.date + timedelta(days=datetime_for_link.repeat)).apply()
+    datetime_for_link.update(date=datetime_for_link['date'] + timedelta(days=datetime_for_link['repeat']))
     await answer_link(link_id, chat_id)
 
 
 async def scheduler_add_job(task):
     link = await get_link(task.link_id)
     task_datetime = datetime.combine(task.date, task.time_start)
-    if not link.one_time and task_datetime < datetime.now():
+    if not link['one_time'] and task_datetime < datetime.now():
         await task.update(date=task.date + timedelta(days=task.repeat)).apply()
         task_datetime = datetime.combine(task.date, task.time_start)
     logger.debug(f"Задание {task} запустится в {task_datetime}")
@@ -26,7 +26,7 @@ async def scheduler_add_job(task):
                       trigger="interval",
                       next_run_time=task_datetime,
                       seconds=int(task.repeat*60*60*24),
-                      args=(link.id, link.group_id))
+                      args=(link['id'], link['group_id']))
 
 
 async def start_mailing():
