@@ -18,14 +18,6 @@ def get_tg_bot_token():
     return token
 
 
-def get_tg_bot_public_port():
-    try:
-        port = env.str('TG_BOT_PUBLIC_PORT')
-    except EnvValidationError:
-        port = os.environ['TG_BOT_PUBLIC_PORT']
-    return port
-
-
 def get_tg_bot_admins():
     try:
         admins = env.list("TG_BOT_ADMIN_USERNAMES")
@@ -48,14 +40,6 @@ def get_db_url():
     return db_url
 
 
-def get_domain_url():
-    try:
-        domain = env.str("DOMAIN")
-    except EnvValidationError:
-        domain = os.environ['DOMAIN']
-    return domain
-
-
 def get_logging_level() -> list:
     try:
         logging_level = env.list("LOGGING_LEVEL")
@@ -73,12 +57,7 @@ def get_time_zone() -> str:
 
 
 TG_BOT_TOKEN = get_tg_bot_token()
-TG_BOT_PUBLIC_PORT = get_tg_bot_public_port()
 TG_BOT_ADMIN_USERNAMES = get_tg_bot_admins()
-
-DOMAIN_URL = get_domain_url()
-WEBHOOK_PATH = f'/tg/webhooks/bot/{TG_BOT_TOKEN}'
-WEBHOOK_URL = f'{DOMAIN_URL}{WEBHOOK_PATH}'
 
 DATABASE_URL = get_db_url()
 

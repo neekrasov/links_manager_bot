@@ -9,7 +9,7 @@ services:
     networks:
       - default
     volumes:
-      - E:\PostgreSQL\14\data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
 
@@ -36,6 +36,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - db
-
+volumes:
+  postgres_data:
 
 
