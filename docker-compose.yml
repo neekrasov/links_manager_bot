@@ -27,6 +27,17 @@ services:
       context: ./tg_bot
       dockerfile: Dockerfile
     container_name: telegram_bot
+
+  web:
+    build:
+      context: ./rest_API
+      dockerfile:
+        Dockerfile
+    container_name: rest_API
+#    volumes:
+#      - .:/usr/src/rest_API
+    ports:
+      - "0.0.0.0:8000:8000"
     networks:
       - default
     env_file:

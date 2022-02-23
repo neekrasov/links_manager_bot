@@ -1,6 +1,7 @@
 APScheduler==3.8.1
-gino==1.0.1
 aiogram==2.19
 aiohttp==3.8.1
 loguru==0.6.0
 environs==9.5.0
+
+

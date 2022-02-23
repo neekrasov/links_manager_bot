@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import CommandStart, CommandHelp, Command
 from filters import IsGroup, IsGroupAdmin
 from keyboards.inline.commandstart_keyboard import start_group_buttons
 from loader import dp
-from utils.db_api.db_commands import register_user, register_groups
+from utils.db_api.db_commangs import register_user, register_group_users
 
 
 @dp.message_handler(IsGroup(), CommandStart())
@@ -30,5 +30,10 @@ async def command_help(message: types.Message):
 async def get_group_for_user(message: types.Message):
     user_id = message.from_user.id
     full_name = message.from_user.full_name
-    await register_user(user_id, full_name)
-    await register_groups(message)
+    usename = message.from_user.username
+    await register_user(user_id, full_name, usename)
+    is_register = await register_group_users(user_id, message.chat.id, message.chat.title)
+    if is_register:
+        await message.answer("ok, go to bot")
+    else:
+        await message.answer("уже была группа иди домой")
