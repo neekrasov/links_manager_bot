@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboards.inline.menu_keyboard import links_cd
-from utils.db_api.db_commangs import get_links_for_group
+from utils.db_api.db_commands import get_links_for_group
 
 
 async def subjects_buttons_for_group(chat_id) -> InlineKeyboardMarkup:

@@ -3,7 +3,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loguru import logger
 
 from data.config import TIME_ZONE
-from utils.db_api.db_commangs import get_datetime_for_link, get_link, get_datetime_for_all_links
+from utils.db_api.db_commands import get_datetime_for_link, get_link, get_datetime_for_all_links
 from utils.handlers import answer_link
 
 scheduler = AsyncIOScheduler(timezone=TIME_ZONE)

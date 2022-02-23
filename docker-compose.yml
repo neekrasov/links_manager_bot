@@ -31,7 +31,7 @@ services:
 #    volumes:
 #      - .:/usr/src/rest_API
     ports:
-      - "0.0.0.0:8000:8000"
+      - "8000:8000"
     networks:
       - default
     env_file:
@@ -40,20 +40,20 @@ services:
       - db
 
 
-#  telegram_bot:
-#    build:
-#      dockerfile:
-#        ./tg_bot/Dockerfile
-#    container_name: telegram_bot
-#    ports:
-#      - ${TG_BOT_PUBLIC_PORT}:${TG_BOT_PUBLIC_PORT}
-#    networks:
-#      - default
-#    env_file:
-#      - .env
-#    restart: always
-#    depends_on:
-#      - db
+  telegram_bot:
+    build:
+      dockerfile:
+        ./tg_bot/Dockerfile
+    container_name: telegram_bot
+    ports:
+      - ${TG_BOT_PUBLIC_PORT}:${TG_BOT_PUBLIC_PORT}
+    networks:
+      - default
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      - db
 
 
 

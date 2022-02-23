@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 
-from utils.db_api.db_commangs import get_user_groups, get_group, get_links_for_group
+from utils.db_api.db_commands import get_user_groups, get_group, get_links_for_group
 
 links_cd = CallbackData("links", "id")
 """"""
@@ -23,8 +23,7 @@ async def get_my_groups(user_id) -> InlineKeyboardMarkup:
     for user_group in user_groups:
         group = await get_group(user_group['group_id'])
         button = InlineKeyboardButton(text=str(group['title']), callback_data=make_cd(level=CURRENT_LEVEL + 10,
-                                                                                      any_id=group[
-                                                                                          'chat_id']))
+                                                                                      any_id=group['chat_id']))
         markup.insert(button)
 
     return markup

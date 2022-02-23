@@ -8,11 +8,11 @@ group_users_url = 'groups/users'
 links_url = 'links'
 links_for_group = 'links/group'
 datetimeforlinks_url = 'links/datetime'
-HOST = '127.0.0.1:8000'
+HOST = 'web'
 
 
 def create_url(url: str, host: str, any_int=""):
-    return f'http://{host}/api/v1/{url}/{any_int}'
+    return f'http://{host}:8000/api/v1/{url}/{any_int}'
 
 
 async def simple_request(url: str, any_id: str = "", many: bool = False) -> dict:

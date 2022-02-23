@@ -1,7 +1,7 @@
 from aiogram.utils.markdown import hlink
 
 from loader import dp
-from utils.db_api.db_commangs import get_link
+from utils.db_api.db_commands import get_link
 
 
 async def answer_link(link_id: int, chat_id: int):
