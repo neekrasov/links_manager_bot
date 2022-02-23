@@ -1,6 +1,5 @@
 from aiogram.utils import executor
 from loguru import logger
-from loader import dp
 
 # Сбор информации о хэндлерах
 from handlers import dp
@@ -19,11 +18,6 @@ async def on_startup(dp):
     # Настройка middlewares
     import middlewares
     middlewares.setup(dp)
-
-    # Подключение к базе данных
-    from utils.db_api import database
-    await database.on_startup(dp)
-    await database.db.gino.create_all()
 
     # Устанавливаем дефолтные команды
     from utils.set_bot_commands import set_default_commands

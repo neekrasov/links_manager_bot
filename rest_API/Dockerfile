@@ -4,8 +4,8 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /usr/src/rest_API
 
-COPY requirements.txt /usr/src/rest_API
+COPY requirements.txt .
 RUN pip install -r requirements.txt
-COPY . /usr/src/rest_API
+COPY . .
 
-CMD python manage.py runserver 0.0.0.0:8000
+CMD python manage.py migrate

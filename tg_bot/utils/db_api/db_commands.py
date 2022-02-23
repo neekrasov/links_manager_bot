@@ -7,7 +7,7 @@ groups_url = 'groups'
 group_users_url = 'groups/users'
 links_url = 'links'
 links_for_group = 'links/group'
-datetimeforlinks_url = 'links/datetime'
+datetime_for_links_url = 'links/datetime'
 HOST = 'web'
 
 
@@ -51,7 +51,12 @@ async def get_links() -> dict:
 
 
 async def get_datetime_for_all_links() -> dict:
-    return await simple_request(url=datetimeforlinks_url, many=True)
+    print(await simple_request(url=datetime_for_links_url, many=True))
+    return await simple_request(url=datetime_for_links_url, many=True)
+
+
+async def get_datetime_for_link(link_id: int) -> dict:
+    return await simple_request(url=links_url, any_id=str(link_id))
 
 
 async def get_user_groups(user_id: int) -> dict:
@@ -60,10 +65,6 @@ async def get_user_groups(user_id: int) -> dict:
 
 async def get_links_for_group(group_id: int) -> dict:
     return await simple_request(url=links_for_group, any_id=str(group_id))
-
-
-async def get_datetime_for_link(link_id: int) -> dict:
-    return await simple_request(url=links_url, any_id=str(link_id))
 
 
 async def register_user(user_id: int, full_name: str, username: str) -> None:

@@ -10,8 +10,9 @@ from utils.db_api.db_commands import register_user, register_group_users
 @dp.message_handler(IsGroup(), CommandStart())
 async def command_start(message: types.Message):
     full_name = message.from_user.full_name
-    await message.answer(f"Привет, {full_name}, я помогу тебе добраться до ссылок твоих предметов!\n",
-                         reply_markup=start_group_buttons)
+    await message.answer(
+        f"Привет, {full_name}, я помогу тебе добраться до ссылок твоих предметов!\n",
+        reply_markup=start_group_buttons)
 
 
 @dp.callback_query_handler(IsGroup(), text='help')
@@ -34,6 +35,12 @@ async def get_group_for_user(message: types.Message):
     await register_user(user_id, full_name, usename)
     is_register = await register_group_users(user_id, message.chat.id, message.chat.title)
     if is_register:
-        await message.answer("ok, go to bot")
+        await message.answer(f"Группа ({message.chat.title}) уже была добавлена для настройки\n"
+                             f"Пользователю: @{message.from_user.username}\n"
+                             f"Для настройки перейдите в бота\n"
+                             f"@{(await dp.bot.get_me())['username']}")
     else:
-        await message.answer("уже была группа иди домой")
+        await message.answer(f"Группа ({message.chat.title}) добавлена для настройки "
+                             f"Пользователю: @{message.from_user.username}\n"
+                             f"Для настройки перейдите в бота\n"
+                             f"@{(await dp.bot.get_me())['username']}")
