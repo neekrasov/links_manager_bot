@@ -34,12 +34,16 @@ async def scheduler_add_job(task):
         task_datetime += timedelta(days=task["repeat"])
 
     logger.debug(f"Задание link_id({task['link_id']}) запустится в {task_datetime}")
-
+    add_job_kwargs = {
+        'trigger': "date",
+        'next_run_time': task_datetime,
+        'args': (link['id'], link['group_id'], task['date'], task["repeat"])
+    }
+    if task["repeat"] != 0:
+        add_job_kwargs['seconds'] = int(task["repeat"] * 60 * 60 * 24)
+        add_job_kwargs['trigger'] = 'interval'
     scheduler.add_job(mailing,
-                      trigger="interval",
-                      next_run_time=task_datetime,
-                      seconds=int(task["repeat"] * 60 * 60 * 24),
-                      args=(link['id'], link['group_id'], task['date'], task["repeat"]))
+                      **add_job_kwargs)
 
 
 async def start_mailing():
