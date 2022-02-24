@@ -1,6 +1,7 @@
 import asyncio
 
 import aiohttp
+from loguru import logger
 
 users_url = 'users'
 groups_url = 'groups'
@@ -55,7 +56,7 @@ async def get_datetime_for_all_links() -> dict:
 
 
 async def get_datetime_for_link(link_id: int) -> dict:
-    return await simple_request(url=links_url, any_id=str(link_id))
+    return await simple_request(url=datetime_for_links_url, any_id=str(link_id))
 
 
 async def get_user_groups(user_id: int) -> dict:

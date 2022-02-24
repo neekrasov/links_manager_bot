@@ -36,6 +36,6 @@ urlpatterns = format_suffix_patterns([
     path("links/<int:pk>", views.LinkViewSet.as_view({'get': 'retrieve'})),
     path("links/group/<negint:group_id>", views.LinksForGroupViewSet.as_view({'get': 'list'})),
     path("links/datetime/", datetimeforlink_list),
-    path("links/datetime/<int:pk>", views.DateTimeForLinkViewSet.as_view({'get': 'retrieve'})),
+    path("links/datetime/<int:link_id>", views.DateTimeForLinkViewSet.as_view({'get': 'retrieve'})),
 
 ])

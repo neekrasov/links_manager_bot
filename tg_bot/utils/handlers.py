@@ -1,9 +1,11 @@
 from datetime import datetime
 
 from aiogram.utils.markdown import hlink
+from loguru import logger
 
 from loader import dp
 from utils.db_api.db_commands import get_link, get_links_for_group, get_datetime_for_link
+from utils.func import get_datetime_from_str
 
 
 async def answer_link(link_id: int, chat_id: int):
@@ -21,8 +23,9 @@ async def answer_links_for_current_datetime_for_group(chat_id: int):
     datetime_now = datetime.now()
     links_for_group = await get_links_for_group(chat_id)
     link_ids = []
-    for link_id in links_for_group:
-        datetime_for_link = await get_datetime_for_link(link_id)
+    for link in links_for_group:
+        link_id = link['id']
+        datetime_for_link = get_datetime_from_str(await get_datetime_for_link(link_id))
         time_start_for_link = datetime.combine(datetime_for_link["date"],
                                                datetime_for_link["time_start"])
         time_finish_for_link = datetime.combine(datetime_for_link["date"],
@@ -37,5 +40,5 @@ async def answer_links_for_current_datetime_for_group(chat_id: int):
             chat_id=chat_id
         )
         return
-    for link_id in link_ids:
-        await answer_link(link_id, chat_id)
+    for link in link_ids:
+        await answer_link(link, chat_id)
