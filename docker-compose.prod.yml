@@ -13,15 +13,6 @@ services:
     env_file:
       - .env
 
-  adminer:
-    image: adminer
-    container_name: adminer
-    ports:
-      - 8080:8080
-    networks:
-      - default
-    restart: always
-
   telegram_bot:
     build:
       context: ./tg_bot
@@ -35,7 +26,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
-      - db
       - web
 
   web:
@@ -43,8 +33,9 @@ services:
       context: ./rest_API
       dockerfile: Dockerfile
     container_name: rest_API
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
-      - 0.0.0.0:8000:8000
+      - 8000:8000
     networks:
       - default
     env_file:

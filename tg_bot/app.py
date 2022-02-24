@@ -6,10 +6,13 @@ from handlers import dp
 
 
 async def on_startup(dp):
-    from utils.misc import logging, settings
-    logging.setup()
+    # Установка настроек
+    from utils.misc import settings
     settings.on_startup()
 
+    # Запускаем логирование
+    from utils.misc import logging
+    logging.setup()
 
     # Настройка фильтров
     import filters
@@ -32,6 +35,7 @@ async def on_startup(dp):
     await on_startup_notify(dp)
 
     logger.info(f'Bot is running')
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, on_startup=on_startup)

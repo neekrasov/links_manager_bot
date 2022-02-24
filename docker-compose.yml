@@ -13,15 +13,6 @@ services:
     env_file:
       - .env
 
-  adminer:
-    image: adminer
-    container_name: adminer
-    ports:
-      - 8080:8080
-    networks:
-      - default
-    restart: always
-
   telegram_bot:
     build:
       context: ./tg_bot

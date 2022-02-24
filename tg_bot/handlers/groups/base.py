@@ -24,7 +24,9 @@ async def show_help(call: types.CallbackQuery):
 async def command_help(message: types.Message):
     await message.answer(f"<b> Стек комманд </b>\n"
                          f"/get_all_links - получить ссылки по всем предметам.\n"
-                         f"/get_group - прикрепить группу.<b>( Для администраторов )</b>")
+                         f"/get_link - получить ссылку на текущее время.\n"
+                         f"/get_group - прикрепить группу.<b>( Для администраторов )</b>"
+                         )
 
 
 @dp.message_handler(IsGroup(), IsGroupAdmin(), Command("get_group"))
@@ -35,12 +37,12 @@ async def get_group_for_user(message: types.Message):
     await register_user(user_id, full_name, usename)
     is_register = await register_group_users(user_id, message.chat.id, message.chat.title)
     if is_register:
-        await message.answer(f"Группа ({message.chat.title}) уже была добавлена для настройки\n"
+        await message.answer(f"Группа ({message.chat.title}) добавлена для настройки\n"
                              f"Пользователю: @{message.from_user.username}\n"
                              f"Для настройки перейдите в бота\n"
                              f"@{(await dp.bot.get_me())['username']}")
     else:
-        await message.answer(f"Группа ({message.chat.title}) добавлена для настройки "
+        await message.answer(f"Группа ({message.chat.title}) уже была добавлена для настройки "
                              f"Пользователю: @{message.from_user.username}\n"
                              f"Для настройки перейдите в бота\n"
                              f"@{(await dp.bot.get_me())['username']}")

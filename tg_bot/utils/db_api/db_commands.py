@@ -51,7 +51,6 @@ async def get_links() -> dict:
 
 
 async def get_datetime_for_all_links() -> dict:
-    print(await simple_request(url=datetime_for_links_url, many=True))
     return await simple_request(url=datetime_for_links_url, many=True)
 
 
@@ -97,6 +96,6 @@ async def register_group_users(user_id: int, group_id: int, group_title: str) ->
             async with session.post(url=create_url(group_users_url, host=HOST), data={
                 "group_id": group_id,
                 "user_id": user_id,
-                "is_a dmin": True,
+                "is_admin": True,
             }) as response:
                 return True
