@@ -3,10 +3,12 @@ from datetime import datetime, date, timedelta
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loguru import logger
 
+from data import config
 from utils.db_api.db_commands import get_link, get_datetime_for_all_links
+from utils.func import get_datetime_from_str
 from utils.handlers import answer_link
 
-scheduler = AsyncIOScheduler()
+scheduler = AsyncIOScheduler(timezone=config.TIME_ZONE)
 
 
 async def update_date_for_link(date: date, repeat: int):
@@ -23,20 +25,21 @@ async def mailing(link_id: int, chat_id: int, date: date, repeat: int):
 async def scheduler_add_job(task):
     # получаем время начала мероприятия
     link = await get_link(task['link_id'])
+    task = get_datetime_from_str(task)
     task_datetime = datetime.combine(task["date"], task["time_start"])
 
     # обновляем дату мероприятия, если оно не одноразовое и его дата отстала от текущей даты
     if not link['one_time'] and task_datetime < datetime.now():
-        await update_date_for_link(task["date"], task["repeat"])
+        await update_date_for_link(task['date'], task["repeat"])
         task_datetime += timedelta(days=task["repeat"])
 
-    logger.debug(f"Задание {task} запустится в {task_datetime}")
+    logger.debug(f"Задание link_id({task['link_id']}) запустится в {task_datetime}")
 
     scheduler.add_job(mailing,
                       trigger="interval",
                       next_run_time=task_datetime,
-                      seconds=int(task.repeat * 60 * 60 * 24),
-                      args=(link['id'], link['group_id']))
+                      seconds=int(task["repeat"] * 60 * 60 * 24),
+                      args=(link['id'], link['group_id'], task['date'], task["repeat"]))
 
 
 async def start_mailing():
