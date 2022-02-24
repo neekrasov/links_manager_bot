@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 
-from utils.db_api.db_commands import get_user_groups, get_group, get_links_for_group
+from utils.db_api.db_commands import get_group, get_links_for_group, get_groups_for_user
 
 links_cd = CallbackData("links", "id")
 """"""
@@ -18,7 +18,7 @@ def make_cd(level, any_id="0"):
 async def get_my_groups(user_id) -> InlineKeyboardMarkup:
     """ Список привязанных к юзеру групп """
     CURRENT_LEVEL = 0
-    user_groups = await get_user_groups(user_id)
+    user_groups = await get_groups_for_user(user_id)
     markup = InlineKeyboardMarkup(resize_keyboard=True)
     for user_group in user_groups:
         group = await get_group(user_group['group_id'])
