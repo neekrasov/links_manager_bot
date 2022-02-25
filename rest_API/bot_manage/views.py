@@ -23,6 +23,9 @@ class GroupUsersViewSet(ModelViewSet):
     serializer_class = GroupUsersSerializer
     lookup_field = 'user_id'
 
+    def filter_queryset(self, queryset):
+        return queryset.filter(**self.request.parser_context['kwargs'])
+
     def get_queryset(self):
         return GroupUsers.objects.all()
 
@@ -45,6 +48,9 @@ class LinksForGroupViewSet(ModelViewSet):
 class DateTimeForLinkViewSet(ModelViewSet):
     serializer_class = DateTimeForLinkSerializer
     lookup_field = 'link_id'
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(**self.request.parser_context['kwargs'])
 
     def get_queryset(self):
         return DateTimeForLink.objects.all()

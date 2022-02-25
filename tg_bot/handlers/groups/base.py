@@ -16,6 +16,7 @@ async def command_start(message: types.Message):
 
 @dp.callback_query_handler(IsGroup(), text='help')
 async def show_help(call: types.CallbackQuery):
+    await call.answer()
     await command_help(call.message)
 
 

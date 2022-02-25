@@ -32,7 +32,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['web', '35.228.187.167', 'localhost', '127.0.0.1']
 
-
+APPEND_SLASH=False
 # Application definition
 
 INSTALLED_APPS = [
