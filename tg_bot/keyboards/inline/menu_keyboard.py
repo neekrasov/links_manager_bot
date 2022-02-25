@@ -7,6 +7,7 @@ from utils.db_api.db_commands import get_group, get_links_for_group, get_groups_
 links_cd = CallbackData("links", "id")
 """"""
 menu_cd = CallbackData("menu", "level", "any_id")
+add_link_cd = CallbackData("add_link", 'any_id')
 
 
 def make_cd(level, any_id="0"):
@@ -20,7 +21,6 @@ async def get_my_groups(user_id) -> InlineKeyboardMarkup:
     """ Список привязанных к юзеру групп """
     CURRENT_LEVEL = 0
     user_groups = await get_groups_for_user(user_id)
-    logger.debug(user_groups)
     markup = InlineKeyboardMarkup(resize_keyboard=True)
     for user_group in user_groups:
         group = await get_group(user_group['group_id'])
@@ -40,7 +40,7 @@ async def get_group_menu_buttons(group_id):
             InlineKeyboardButton(text="Получить все ссылки",
                                  callback_data=make_cd(level=CURRENT_LEVEL + 1, any_id=group_id)),
             InlineKeyboardButton(text="Добавить ссылку",
-                                 callback_data=make_cd(level=CURRENT_LEVEL + 10, any_id=group_id)),
+                                 callback_data=add_link_cd.new(any_id=group_id)),
         ],
         [
             InlineKeyboardButton(text="Получить ближайшую по дате ссылку", callback_data="get_link_by_date")
