@@ -100,3 +100,14 @@ async def register_group_users(user_id: int, group_id: int, group_title: str) ->
                 "is_admin": True,
             }) as response:
                 return True
+
+
+async def register_link(group_id: int, title: str, url: str, one_time: bool) -> bool:
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url=create_url(links_url, host=HOST), data={
+            "group_id": group_id,
+            "title": title,
+            "url": url,
+            "one_time": one_time
+        }) as response:
+            return True

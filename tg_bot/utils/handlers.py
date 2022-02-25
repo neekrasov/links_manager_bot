@@ -22,7 +22,7 @@ async def answer_links_for_current_datetime_for_group(chat_id: int):
 
     datetime_now = datetime.now()
     links_for_group = await get_links_for_group(chat_id)
-    link_ids = []
+    links_id = []
     for link in links_for_group:
         link_id = link['id']
         # 1 ссылка может отправляться в разное время, получаем все времена для ссылки
@@ -36,12 +36,12 @@ async def answer_links_for_current_datetime_for_group(chat_id: int):
             # если текущее время находятся в интервале начала и конца мероприятия, добавляем в общий
             # список ссылок
             if time_start_for_link <= datetime_now <= time_finish_for_link:
-                link_ids.append(link_id)
-    if not link_ids:
+                links_id.append(link_id)
+    if not links_id:
         await dp.bot.send_message(
             text='На текущее время мероприятий нет',
             chat_id=chat_id
         )
         return
-    for link in link_ids:
+    for link in links_id:
         await answer_link(link, chat_id)
