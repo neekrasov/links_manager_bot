@@ -4,21 +4,22 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loguru import logger
 
 from data import config
-from utils.db_api.db_commands import get_link, get_datetime_for_all_links
+from utils.db_api.db_commands import get_link, get_datetime_for_all_links, update_for_link
 from utils.func import get_datetime_from_str
 from utils.handlers import answer_link
 
 scheduler = AsyncIOScheduler(timezone=config.TIME_ZONE)
 
 
-async def update_date_for_link(date: date, repeat: int):
+async def update_date_for_link(link_id: int, date: date, repeat: int):
     """Сдвигает дату следующей отправки мероприятия на [repeat] дней"""
-    # datetime_for_link.update(date=date + timedelta(days=repeat))
-    pass
+    new_date = date + timedelta(days=repeat)
+    logger.debug(f"Для задания link_id({link_id}) date=({date}) сменился на date=({new_date})")
+    await update_for_link(link_id, date=new_date)
 
 
 async def mailing(link_id: int, chat_id: int, date: date, repeat: int):
-    await update_date_for_link(date, repeat)
+    await update_date_for_link(link_id, date, repeat)
     await answer_link(link_id, chat_id)
 
 
@@ -30,7 +31,7 @@ async def scheduler_add_job(task):
 
     # обновляем дату мероприятия, если оно не одноразовое и его дата отстала от текущей даты
     if not link['one_time'] and task_datetime < datetime.now():
-        await update_date_for_link(task['date'], task["repeat"])
+        await update_date_for_link(link['id'], task['date'], task["repeat"])
         task_datetime += timedelta(days=task["repeat"])
 
     logger.debug(f"Задание link_id({task['link_id']}) запустится в {task_datetime}")
