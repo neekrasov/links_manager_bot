@@ -11,38 +11,55 @@ from utils.handlers import answer_link
 scheduler = AsyncIOScheduler(timezone=config.TIME_ZONE)
 
 
-async def update_date_for_link(link_id: int, date: date, repeat: int):
+async def update_date_for_link(task: dict):
     """Сдвигает дату следующей отправки мероприятия на [repeat] дней"""
-    new_date = date + timedelta(days=repeat)
-    logger.debug(f"Для задания link_id({link_id}) date=({date}) сменился на date=({new_date})")
-    await update_for_link(link_id, date=new_date)
+    task_id = task['id']
+    task_date = task['date']
+    task_repeat = task['repeat']
+    new_date = task_date + timedelta(days=task_repeat)
+    link_id = task['link_id']
+    logger.debug(f"Для задания link_id({link_id}) дата=({task_date}) сменилась на дату=({new_date})")
+    await update_for_link(task_id, date=new_date)
 
 
-async def mailing(link_id: int, chat_id: int, date: date, repeat: int):
-    await update_date_for_link(link_id, date, repeat)
+async def mailing(task: dict, link_id: int, chat_id: int):
+    await update_date_for_link(task)
     await answer_link(link_id, chat_id)
 
 
-async def scheduler_add_job(task):
-    # получаем время начала мероприятия
-    link = await get_link(task['link_id'])
-    task = get_datetime_from_str(task)
-    task_datetime = datetime.combine(task["date"], task["time_start"])
+async def scheduler_add_job(task: dict):
+    prearranged_link_minutes = timedelta(minutes=config.SHEDULER_PREARRANGED_LINK_MINUTES)
 
-    # обновляем дату мероприятия, если оно не одноразовое и его дата отстала от текущей даты
-    if not link['one_time'] and task_datetime < datetime.now():
-        await update_date_for_link(link['id'], task['date'], task["repeat"])
-        task_datetime += timedelta(days=task["repeat"])
+    # получаем время начала мероприятия
+    task = get_datetime_from_str(task)
+    task_datetime = datetime.combine(task["date"], task["time_start"]) - prearranged_link_minutes
+
+    link = await get_link(task['link_id'])
+
+    datetime_now = datetime.now()
+    different_time = (datetime_now - task_datetime)
+
+    # обновляем дату мероприятия если его время отстало от текущего времени
+    tasl_late = different_time.total_seconds() > prearranged_link_minutes.total_seconds()
+    if tasl_late and task["repeat"] != 0:
+        # если она одноразовая удаляем ее из БД
+        if link['one_time']:
+            pass
+        else:
+            task_datetime += timedelta(days=task["repeat"]) * (different_time.days // task["repeat"])
+            task['date'] = task_datetime.date()
+            await update_date_for_link(task)
 
     logger.debug(f"Задание link_id({task['link_id']}) запустится в {task_datetime}")
+
     add_job_kwargs = {
         'trigger': "date",
         'next_run_time': task_datetime,
-        'args': (link['id'], link['group_id'], task['date'], task["repeat"])
+        'args': (task, link['id'], link['group_id'])
     }
     if task["repeat"] != 0:
-        add_job_kwargs['seconds'] = int(task["repeat"] * 60 * 60 * 24)
         add_job_kwargs['trigger'] = 'interval'
+        add_job_kwargs['seconds'] = int(task["repeat"] * 60 * 60 * 24)
     scheduler.add_job(mailing,
                       **add_job_kwargs)
 

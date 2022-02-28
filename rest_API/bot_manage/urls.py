@@ -31,10 +31,12 @@ links_list = views.LinkViewSet.as_view({
     'get': 'list',
     'post': 'create',
 })
+
+
 links_datetime_list = views.DateTimeForLinkViewSet.as_view({
     'get': 'list',
     'post': 'create',
-    'put': 'update',
+    'patch': 'partial_update',
 })
 
 register_converter(service.NegativeIntConverter, 'negint')
@@ -50,8 +52,10 @@ urlpatterns = format_suffix_patterns([
     # path("groups/<negint:group_id>/links/datetime", links_datetime_for_group_list),
 
     path("links/", links_list),
-    path("links/datetime", links_datetime_list),
     path("links/<int:pk>", views.LinkViewSet.as_view({'get': 'retrieve'})),
-    path("links/<int:link_id>/datetime", links_datetime_list),
+    path("links/datetime/", links_datetime_list),
+    path("links/datetime/<int:pk>", links_datetime_list),
 
+    # path("datetime/", links_list),
+    # path("datetime/<int:pk>", links_list),
 ])

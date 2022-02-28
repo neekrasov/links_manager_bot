@@ -12,8 +12,8 @@ links_datetime_for_group_url = f'{links_for_group_url}/datetime'
 
 links_url = 'links/'
 link_url = links_url + '{}'
-links_datetime = f'{links_url}datetime'
-link_datetime = f'{link_url}/datetime'
+links_datetime = f'{links_url}datetime/'
+link_datetime = links_datetime + '{}'
 
 HOST = 'web'
 
@@ -33,19 +33,18 @@ async def simple_get_request(url: str, any_id: list = None) -> dict:
 async def simple_post_request(url: str, any_id: list = None, data: dict = None):
     if data is None:
         data = dict()
-    logger.debug(data)
     async with aiohttp.ClientSession() as session:
         async with session.post(url=create_url(url, any_id=any_id, host=HOST),
                                 data=data) as response:
             pass
 
 
-async def simple_put_request(url: str, any_id: list = None, data: dict = None):
+async def simple_patch_request(url: str, any_id: list = None, data: dict = None):
     if data is None:
         data = dict()
     async with aiohttp.ClientSession() as session:
-        async with session.put(url=create_url(url, any_id=any_id, host=HOST),
-                               data=data) as response:
+        async with session.patch(url=create_url(url, any_id=any_id, host=HOST),
+                                 data=data) as response:
             pass
 
 
@@ -122,5 +121,5 @@ async def register_group_users(user_id: int, group_id: int, group_title: str) ->
         })
 
 
-async def update_for_link(link_id: int, **kwargs):
-    await simple_put_request(url=link_datetime, any_id=[link_id], data=kwargs)
+async def update_for_link(task_id: int, **kwargs):
+    await simple_patch_request(url=link_datetime, any_id=[task_id], data=kwargs)

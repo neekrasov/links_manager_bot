@@ -26,6 +26,14 @@ def get_tg_bot_admins():
     return [int(id) for id in admins]
 
 
+def get_sheduler_prearranged_link_minutes():
+    try:
+        sheduler_prearranged_link_minutes = env.int("SHEDULER_PREARRANGED_LINK_MINUTES")
+    except EnvValidationError:
+        sheduler_prearranged_link_minutes = os.environ['SHEDULER_PREARRANGED_LINK_MINUTES'].split(',')
+    return sheduler_prearranged_link_minutes
+
+
 def get_db_url():
     dp_params = dict()
     for key in ["POSTGRES_USER", "POSTGRES_PASSWORD", "POSTGRES_HOST", "POSTGRES_PORT",
@@ -58,6 +66,8 @@ def get_time_zone() -> str:
 
 TG_BOT_TOKEN = get_tg_bot_token()
 TG_BOT_ADMIN_USERNAMES = get_tg_bot_admins()
+
+SHEDULER_PREARRANGED_LINK_MINUTES=get_sheduler_prearranged_link_minutes()
 
 DATABASE_URL = get_db_url()
 
