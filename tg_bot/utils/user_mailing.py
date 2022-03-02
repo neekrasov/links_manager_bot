@@ -15,6 +15,8 @@ async def update_date_for_link(task: dict):
     """Обновляет дату для ссылки"""
     task_id = task['id']
     task_date = task['date']
+
+    logger.debug(f"Для задания link_id({task['link_id']}) время сменилось на ({task['date']} {task['time_start']})")
     await update_for_link(task_id, date=task_date)
 
 
@@ -42,11 +44,9 @@ async def make_normal_datetime(task):
     task_late = different_time.total_seconds() > 0
     if task_late:
         task['date'] += timedelta(days=task["repeat"]) * (different_time.days // task["repeat"] + 1)
-        logger.debug(
-            f"Для задания link_id({task['link_id']}) дата сменилась на ({task['date']})")
         await update_date_for_link(task)
 
-        return task
+    return task
 
 
 async def mailing(task: dict, link_id: int, chat_id: int):
