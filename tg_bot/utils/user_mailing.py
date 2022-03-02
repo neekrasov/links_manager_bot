@@ -57,7 +57,7 @@ async def scheduler_add_job(task: dict):
         else:
             task_datetime_start += timedelta(days=task["repeat"]) * (different_time.days // task["repeat"])
             task['date'] = task_datetime_start.date()
-            await scheduler_update_date_for_link(task)
+            await update_date_for_link(task)
 
     logger.debug(f"Задание link_id({task['link_id']}) запустится в {task_datetime_start}")
 
