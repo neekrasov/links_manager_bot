@@ -20,7 +20,6 @@ async def get_my_groups(user_id) -> InlineKeyboardMarkup:
     """ Список привязанных к юзеру групп """
     CURRENT_LEVEL = 0
     user_groups = await get_groups_for_user(user_id)
-    logger.debug(user_groups)
     markup = InlineKeyboardMarkup(resize_keyboard=True)
     for user_group in user_groups:
         group = await get_group(user_group['group_id'])
