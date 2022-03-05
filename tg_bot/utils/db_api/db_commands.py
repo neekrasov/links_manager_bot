@@ -3,17 +3,18 @@ from loguru import logger
 
 users_url = 'users/'
 user_url = users_url + '{}'
-groups_for_user_url = f'{user_url}/groups'
+groups_for_user_url = f'{user_url}/groups/'
 
 groups_url = 'groups/'
 group_url = groups_url + '{}'
-links_for_group_url = f'{group_url}/links'
-links_datetime_for_group_url = f'{links_for_group_url}/datetime'
+links_for_group_url = f'{group_url}/links/'
+links_datetime_for_group_url = f'{links_for_group_url}/datetime/'
 
 links_url = 'links/'
 link_url = links_url + '{}'
-links_datetime = f'{links_url}datetime/'
-link_datetime = links_datetime + '{}'
+link_datetime = f'{link_url}/datetime/'
+datetime_links = f'{links_url}datetime/'
+datetime_link = datetime_links + '{}'
 
 HOST = 'web'
 
@@ -73,7 +74,7 @@ async def get_links() -> dict:
 
 
 async def get_datetime_for_all_links() -> dict:
-    return await simple_get_request(url=links_datetime)
+    return await simple_get_request(url=datetime_links)
 
 
 async def get_datetime_for_link(link_id: int) -> list:
@@ -122,4 +123,4 @@ async def register_group_users(user_id: int, group_id: int, group_title: str) ->
 
 
 async def update_for_link(task_id: int, **kwargs):
-    await simple_patch_request(url=link_datetime, any_id=[task_id], data=kwargs)
+    await simple_patch_request(url=datetime_link, any_id=[task_id], data=kwargs)
