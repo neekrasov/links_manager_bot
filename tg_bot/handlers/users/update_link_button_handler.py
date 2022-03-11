@@ -1,6 +1,7 @@
 import datetime
 
 from aiogram import types
+from loguru import logger
 
 from filters import IsPrivate
 from handlers.users.menu_handler import show_admin_menu
@@ -9,8 +10,9 @@ from keyboards.inline.update_date_link_keyboard import select_update_buttons, ed
     edit_lessons_start_time_buttons, edit_lessons_finish_time_buttons, edit_repeat_buttons
 from loader import dp
 from utils.constant import LESSONS_START, LESSONS_FINISH
-from utils.db_api.db_commands import register_datetime_for_link
-from utils.user_mailing import scheduler_add_job
+from utils.db_api.db_commands import register_datetime_for_link, get_datetime_for_link
+from utils.func import get_datetime_from_str
+from utils.user_mailing import scheduler_add_task
 
 
 @dp.callback_query_handler(IsPrivate(), update_date_link_cd.filter())
@@ -98,7 +100,7 @@ async def final_recordings_for_update_link(call: types.CallbackQuery, link_id, g
 
     }
 
-    await register_datetime_for_link(**data)
-    await scheduler_add_job(data)
+    datetime_for_link = await register_datetime_for_link(**data)
+    await scheduler_add_task(datetime_for_link)
     await call.answer(text="Время было успешно обновлено")
     await back_to_admin_menu(call, group_id)
