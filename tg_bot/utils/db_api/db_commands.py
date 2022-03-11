@@ -1,21 +1,20 @@
-import asyncio
-
 import aiohttp
 from loguru import logger
 
 users_url = 'users/'
 user_url = users_url + '{}'
-groups_for_user_url = f'{user_url}/groups'
+groups_for_user_url = f'{user_url}/groups/'
 
 groups_url = 'groups/'
 group_url = groups_url + '{}'
-links_for_group_url = f'{group_url}/links'
-links_datetime_for_group_url = f'{links_for_group_url}/datetime'
+links_for_group_url = f'{group_url}/links/'
+links_datetime_for_group_url = f'{links_for_group_url}/datetime/'
 
 links_url = 'links/'
 link_url = links_url + '{}'
-links_datetime = f'{links_url}datetime'
-link_datetime = f'{link_url}/datetime'
+link_datetime = f'{link_url}/datetime/'
+datetime_links = f'{links_url}datetime/'
+datetime_link = datetime_links + '{}'
 
 HOST = 'web'
 
@@ -41,12 +40,12 @@ async def simple_post_request(url: str, any_id: list = None, data: dict = None):
             pass
 
 
-async def simple_put_request(url: str, any_id: list = None, data: dict = None):
+async def simple_patch_request(url: str, any_id: list = None, data: dict = None):
     if data is None:
         data = dict()
     async with aiohttp.ClientSession() as session:
-        async with session.put(url=create_url(url, any_id=any_id, host=HOST),
-                               data=data) as response:
+        async with session.patch(url=create_url(url, any_id=any_id, host=HOST),
+                                 data=data) as response:
             pass
 
 
@@ -75,10 +74,10 @@ async def get_links() -> dict:
 
 
 async def get_datetime_for_all_links() -> dict:
-    return await simple_get_request(url=links_datetime)
+    return await simple_get_request(url=datetime_links)
 
 
-async def get_datetime_for_link(link_id: int) -> dict:
+async def get_datetime_for_link(link_id: int) -> list:
     return await simple_get_request(url=link_datetime, any_id=[link_id])
 
 
@@ -123,29 +122,5 @@ async def register_group_users(user_id: int, group_id: int, group_title: str) ->
         })
 
 
-async def update_for_link(link_id: int, **kwargs):
-    await simple_put_request(url=link_datetime, any_id=[link_id], data=kwargs)
-
-
-async def register_link(group_id: int, title: str, url: str, one_time: bool) -> bool:
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url=create_url(links_url, host=HOST), data={
-            "group_id": group_id,
-            "title": title,
-            "url": url,
-            "one_time": one_time
-        }) as response:
-            return True
-
-
-async def register_datetime_for_link(**kwargs):
-    await simple_post_request(url=links_datetime, data=kwargs)
-
-
-# asyncio.run(register_datetime_for_link({
-#     "link_id": int(link_id),
-#     "date": date,
-#     "time_start": time_start_link,
-#     "time_finish": time_finish_link,
-#     "repeat": int(repeat
-# }))
+async def update_for_link(task_id: int, **kwargs):
+    await simple_patch_request(url=datetime_link, any_id=[task_id], data=kwargs)

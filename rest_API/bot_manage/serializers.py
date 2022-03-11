@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.fields import CharField
+
 from .models import User, Group, GroupUsers, Link, DateTimeForLink
 
 
@@ -45,6 +47,12 @@ class LinkSerializer(serializers.ModelSerializer):
 
 
 class DateTimeForLinkSerializer(serializers.ModelSerializer):
+    id = CharField(read_only=True)
+
+    def validate(self, attrs):
+        self._kwargs["partial"] = True
+        return super().validate(attrs)
+
     class Meta:
         model = DateTimeForLink
         fields = (
@@ -55,3 +63,4 @@ class DateTimeForLinkSerializer(serializers.ModelSerializer):
             'time_finish',
             'repeat',
         )
+

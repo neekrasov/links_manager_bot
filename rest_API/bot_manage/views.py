@@ -1,3 +1,4 @@
+from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet, ModelViewSet
 
 from .models import User, Group, GroupUsers, Link, DateTimeForLink
@@ -47,7 +48,6 @@ class LinksForGroupViewSet(ModelViewSet):
 
 class DateTimeForLinkViewSet(ModelViewSet):
     serializer_class = DateTimeForLinkSerializer
-    lookup_field = 'link_id'
 
     def filter_queryset(self, queryset):
         return queryset.filter(**self.request.parser_context['kwargs'])
