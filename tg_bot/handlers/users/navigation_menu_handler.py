@@ -1,8 +1,8 @@
 from aiogram import types
 
 from filters import IsPrivate
+from keyboards.inline.callback_datas import menu_cd
 
-from keyboards.inline.menu_keyboard import menu_cd
 from loader import dp
 
 

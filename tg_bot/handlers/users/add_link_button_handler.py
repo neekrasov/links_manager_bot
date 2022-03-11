@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 
 from handlers.users.menu_handler import show_admin_menu
-from keyboards.inline.menu_keyboard import add_link_cd
+from keyboards.inline.callback_datas import add_link_cd
 from loader import dp
 from utils.db_api.db_commands import register_link
 
@@ -36,8 +36,7 @@ async def add_link_title(message: types.Message, state: FSMContext):
     group_id = data.get("group_id")
     if message.text == "Вернуться в главное меню":
         await state.finish()
-        await show_admin_menu(message, group_id)
-        await message.delete()
+        await show_admin_menu(message=message, any_id=group_id)
     else:
         await state.update_data(
             link_title=message.text
@@ -52,22 +51,21 @@ async def add_link_url(message: types.Message, state: FSMContext):
     group_id = data.get("group_id")
     if message.text == "Вернуться в главное меню":
         await state.finish()
-        await show_admin_menu(message, group_id)
-        await message.delete()
+        await show_admin_menu(message=message, any_id=group_id)
     else:
         await state.update_data(
             link_url=message.text
         )
         markup = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="Да", callback_data="yes")
+                InlineKeyboardButton(text="Да", callback_data="yes(add_link_handler)")
             ],
             [
-                InlineKeyboardButton(text="Нет", callback_data="no")
+                InlineKeyboardButton(text="Нет", callback_data="no(add_link_handler)")
             ],
             [
                 InlineKeyboardButton(text="Вернуться в главное меню",
-                                     callback_data="back")
+                                     callback_data="back(add_link_handler)")
             ]
         ], row_width=2)
         await message.answer(text="Ссылка должны вызваться лишь единожды?",
@@ -82,23 +80,24 @@ async def final_add(state: FSMContext, call: types.CallbackQuery, one_time: bool
     link_url = data.get("link_url")
     one_time = one_time
     await register_link(group_id=group_id, title=link_title, url=link_url, one_time=one_time)
-    await state.finish()
     await call.answer("Ссылка была добавлена успешно!")
+    await show_admin_menu(message=call, any_id=group_id)
+    await state.finish()
 
 
-@dp.callback_query_handler(state="one_time_question", text="yes")
+@dp.callback_query_handler(state="one_time_question", text="yes(add_link_handler)")
 async def one_time_question_yes(call: types.CallbackQuery, state: FSMContext):
     await final_add(state=state, call=call, one_time=True)
 
 
-@dp.callback_query_handler(state="one_time_question", text="no")
+@dp.callback_query_handler(state="one_time_question", text="no(add_link_handler)")
 async def one_time_question_no(call: types.CallbackQuery, state: FSMContext):
     await final_add(state=state, call=call, one_time=False)
 
 
-@dp.callback_query_handler(state="one_time_question", text="back")
+@dp.callback_query_handler(state="one_time_question", text="back(add_link_handler)")
 async def one_time_question_back(call: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     group_id = data.get("group_id")
     await state.finish()
-    await show_admin_menu(call, group_id)
+    await show_admin_menu(message=call, any_id=group_id)

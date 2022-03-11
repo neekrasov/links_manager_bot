@@ -35,7 +35,6 @@ async def simple_get_request(url: str, any_id: list = None) -> dict:
 async def simple_post_request(url: str, any_id: list = None, data: dict = None):
     if data is None:
         data = dict()
-    logger.debug(data)
     async with aiohttp.ClientSession() as session:
         async with session.post(url=create_url(url, any_id=any_id, host=HOST),
                                 data=data) as response:
@@ -79,7 +78,7 @@ async def get_datetime_for_all_links() -> dict:
     return await simple_get_request(url=links_datetime)
 
 
-async def get_datetime_for_link(link_id: int) -> list:
+async def get_datetime_for_link(link_id: int) -> dict:
     return await simple_get_request(url=link_datetime, any_id=[link_id])
 
 
@@ -137,3 +136,16 @@ async def register_link(group_id: int, title: str, url: str, one_time: bool) -> 
             "one_time": one_time
         }) as response:
             return True
+
+
+async def register_datetime_for_link(**kwargs):
+    await simple_post_request(url=links_datetime, data=kwargs)
+
+
+# asyncio.run(register_datetime_for_link({
+#     "link_id": int(link_id),
+#     "date": date,
+#     "time_start": time_start_link,
+#     "time_finish": time_finish_link,
+#     "repeat": int(repeat
+# }))

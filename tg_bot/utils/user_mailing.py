@@ -24,12 +24,21 @@ async def mailing(link_id: int, chat_id: int, date: date, repeat: int):
 
 
 async def scheduler_add_job(task):
-    # получаем время начала мероприятия
+    # Получение время начала мероприятия
     link = await get_link(task['link_id'])
-    task = get_datetime_from_str(task)
+    try:
+        task = get_datetime_from_str(task)
+    except TypeError:
+        task = {
+            'link_id': task['link_id'],
+            'date': task['date'],
+            'time_start': task['time_start'],
+            'time_finish': task['time_finish'],
+            'repeat': task['repeat'],
+        }
     task_datetime = datetime.combine(task["date"], task["time_start"])
 
-    # обновляем дату мероприятия, если оно не одноразовое и его дата отстала от текущей даты
+    # Обновление даты мероприятия, если оно не одноразовое и его дата отстала от текущей даты
     if not link['one_time'] and task_datetime < datetime.now():
         await update_date_for_link(link['id'], task['date'], task["repeat"])
         task_datetime += timedelta(days=task["repeat"])
