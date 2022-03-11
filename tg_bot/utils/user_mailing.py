@@ -51,7 +51,6 @@ async def make_normal_datetime(task):
 
 async def mailing(task: dict, link_id: int, chat_id: int):
     await answer_link(link_id, chat_id)
-    await scheduler_update_date_for_link(task)
 
 
 async def scheduler_add_task(task: dict):
@@ -76,6 +75,7 @@ async def scheduler_add_task(task: dict):
         add_job_kwargs['seconds'] = int(task["repeat"] * 60 * 60 * 24)
     scheduler.add_job(mailing,
                       **add_job_kwargs)
+    await scheduler_update_date_for_link(task)
 
 
 async def start_mailing():
