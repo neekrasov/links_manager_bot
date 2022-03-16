@@ -1,7 +1,6 @@
 import datetime
 
 from aiogram import types
-from loguru import logger
 
 from filters import IsPrivate
 from handlers.users.menu_handler import show_admin_menu
@@ -10,8 +9,7 @@ from keyboards.inline.update_date_link_keyboard import select_update_buttons, ed
     edit_lessons_start_time_buttons, edit_lessons_finish_time_buttons, edit_repeat_buttons
 from loader import dp
 from utils.constant import LESSONS_START, LESSONS_FINISH
-from utils.db_api.db_commands import register_datetime_for_link, get_datetime_for_link
-from utils.func import get_datetime_from_str
+from utils.db_api.db_commands import register_datetime_for_link
 from utils.user_mailing import scheduler_add_task
 
 
@@ -97,7 +95,6 @@ async def final_recordings_for_update_link(call: types.CallbackQuery, link_id, g
         "time_start": time_start_link,
         "time_finish": time_finish_link,
         "repeat": int(repeat),
-
     }
 
     datetime_for_link = await register_datetime_for_link(**data)

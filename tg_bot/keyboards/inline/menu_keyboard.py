@@ -31,7 +31,7 @@ async def get_group_menu_buttons(group_id):
         [
             InlineKeyboardButton(text="Добавить ссылку",
                                  callback_data=add_link_cd.new(any_id=group_id)),
-            InlineKeyboardButton(text="Обновить время ссылки",
+            InlineKeyboardButton(text="Добавить время для ссылки",
                                  callback_data=make_update_date_link_cd(
                                      level=1,
                                      group_id=group_id
@@ -41,9 +41,9 @@ async def get_group_menu_buttons(group_id):
         [
             InlineKeyboardButton(text="Получить ближайшую по дате ссылку", callback_data="get_link_by_date")
         ],
-        [
-            InlineKeyboardButton(text="Настройки приватности", callback_data="privacy_settings"),
-        ],
+        # [
+        #     InlineKeyboardButton(text="Настройки приватности", callback_data="privacy_settings"),
+        # ],
         [
             InlineKeyboardButton(text="Вернуться к выбору групп",
                                  callback_data=make_menu_cd(level=CURRENT_LEVEL - 10, any_id=group_id))
