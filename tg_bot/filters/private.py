@@ -2,6 +2,7 @@ from typing import Union
 
 from aiogram import types
 from aiogram.dispatcher.filters import BoundFilter
+from loguru import logger
 
 from data.config import TG_BOT_ADMIN_USERNAMES
 from loader import bot
@@ -9,20 +10,25 @@ from loader import bot
 is_admin = lambda id: id in TG_BOT_ADMIN_USERNAMES
 
 
-class IsGroup(BoundFilter):
-    async def check(self, message: Union[types.Message, types.CallbackQuery]) -> bool:
-        if isinstance(message, types.Message):
-            return message.chat.type == types.ChatType.SUPERGROUP
-        if isinstance(message, types.CallbackQuery):
-            return message.message.chat.type == types.ChatType.SUPERGROUP
-
-
 class IsPrivate(BoundFilter):
     async def check(self, message: Union[types.Message, types.CallbackQuery]) -> bool:
         if isinstance(message, types.Message):
             return message.chat.type == types.ChatType.PRIVATE
         if isinstance(message, types.CallbackQuery):
+            if hasattr(message, 'chat_instance'):
+                return True
             return message.message.chat.type == types.ChatType.PRIVATE
+
+
+class IsGroup(BoundFilter):
+    async def check(self, message: Union[types.Message, types.CallbackQuery]) -> bool:
+        if isinstance(message, types.Message):
+            return message.chat.type == types.ChatType.SUPERGROUP
+        elif isinstance(message, types.CallbackQuery):
+            logger.debug(message)
+            if hasattr(message, 'chat_instance'):
+                return True
+            return message.message.chat.type == types.ChatType.SUPERGROUP
 
 
 class IsForwarded(BoundFilter):

@@ -4,8 +4,6 @@ services:
   db:
     image: postgres:14-alpine
     container_name: postgres
-    ports:
-      - 5432:5432
     networks:
       - default
     volumes:
