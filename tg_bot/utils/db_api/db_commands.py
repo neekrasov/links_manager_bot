@@ -1,5 +1,4 @@
 import aiohttp
-from loguru import logger
 
 users_url = 'users/'
 user_url = users_url + '{}'
@@ -37,7 +36,7 @@ async def simple_post_request(url: str, any_id: list = None, data: dict = None):
     async with aiohttp.ClientSession() as session:
         async with session.post(url=create_url(url, any_id=any_id, host=HOST),
                                 data=data) as response:
-            pass
+            return await response.json()
 
 
 async def simple_patch_request(url: str, any_id: list = None, data: dict = None):
@@ -46,7 +45,7 @@ async def simple_patch_request(url: str, any_id: list = None, data: dict = None)
     async with aiohttp.ClientSession() as session:
         async with session.patch(url=create_url(url, any_id=any_id, host=HOST),
                                  data=data) as response:
-            pass
+            return await response.json()
 
 
 async def get_user(user_id: int) -> dict:
@@ -106,6 +105,19 @@ async def register_group(chat_id: int, chat_title: str) -> None:
         "chat_id": chat_id,
         "title": chat_title,
     })
+
+
+async def register_link(group_id: int, title: str, url: str, one_time) -> None:
+    await simple_post_request(url=links_url, data={
+        "group_id": group_id,
+        "title": title,
+        "url": url,
+        "one_time": one_time,
+    })
+
+
+async def register_datetime_for_link(**kwargs):
+    return await simple_post_request(url=datetime_links, data=kwargs)
 
 
 async def register_group_users(user_id: int, group_id: int, group_title: str) -> bool:

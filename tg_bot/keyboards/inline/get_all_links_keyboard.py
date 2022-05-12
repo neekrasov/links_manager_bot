@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from keyboards.inline.menu_keyboard import links_cd
+from keyboards.inline.callback_datas import links_cd
 from utils.db_api.db_commands import get_links_for_group
 
 

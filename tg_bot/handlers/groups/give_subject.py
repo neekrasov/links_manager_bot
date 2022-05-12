@@ -2,8 +2,8 @@ from aiogram import types
 from aiogram.dispatcher.filters import Command
 
 from filters import IsGroup
+from keyboards.inline.callback_datas import links_cd
 from keyboards.inline.get_all_links_keyboard import subjects_buttons_for_group
-from keyboards.inline.menu_keyboard import links_cd
 from loader import dp
 from utils.handlers import answer_link, answer_links_for_current_datetime_for_group
 

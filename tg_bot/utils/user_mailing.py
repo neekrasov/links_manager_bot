@@ -1,10 +1,10 @@
-from datetime import datetime, date, timedelta
+from datetime import datetime, timedelta
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from loguru import logger
 
 from data import config
-from utils.db_api.db_commands import get_link, get_datetime_for_all_links, update_for_link
+from utils.db_api.db_commands import get_link, get_datetime_for_all_links, update_for_link, get_datetime_for_link
 from utils.func import get_datetime_from_str
 from utils.handlers import answer_link
 
@@ -30,7 +30,10 @@ async def scheduler_update_date_for_link(task: dict):
 
 
 async def make_normal_datetime(task):
-    task = get_datetime_from_str(task)
+    try:
+        task = get_datetime_from_str(task)
+    except TypeError:
+        pass
     task_datetime_finish = datetime.combine(task["date"], task["time_finish"])
 
     if task["repeat"] == 0:
@@ -59,7 +62,7 @@ async def scheduler_add_task(task: dict):
     # получаем время начала мероприятия
     task = await make_normal_datetime(task)
     task_datetime_start = datetime.combine(task["date"],
-                                            task["time_start"]) - prearranged_link_minutes
+                                           task["time_start"]) - prearranged_link_minutes
 
     logger.debug(f"Задание link_id({task['link_id']}) запустится в {task_datetime_start}")
 
@@ -77,6 +80,12 @@ async def scheduler_add_task(task: dict):
                       **add_job_kwargs)
     await scheduler_update_date_for_link(task)
 
+
+#
+# async def scheduler_add_task_for_link(link_id: int):
+#     datetime_link = await get_datetime_for_link(link_id)
+#     await scheduler_add_task(datetime_link)
+#
 
 async def start_mailing():
     scheduler.start()

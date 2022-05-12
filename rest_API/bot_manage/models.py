@@ -58,7 +58,7 @@ class Link(models.Model):
 class DateTimeForLink(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='ID')
     link_id = models.ForeignKey(Link, verbose_name="Link ID", on_delete=models.CASCADE)
-    date = models.DateField(verbose_name='Date')
+    date = models.DateField(verbose_name='Date')  # Дата(когда запостить) ссылки
     time_start = models.TimeField(verbose_name='Time Start')
     time_finish = models.TimeField(verbose_name='Time Finish')
     repeat = models.IntegerField(verbose_name='Repeat')

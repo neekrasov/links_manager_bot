@@ -10,6 +10,7 @@ async def on_startup(dp):
     from utils.misc import settings
     settings.on_startup()
 
+
     # Запускаем логирование
     from utils.misc import logging
     logging.setup()
